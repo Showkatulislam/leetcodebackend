@@ -28,8 +28,8 @@ app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(cookieParser());
 
 app.use("/api/v1", apiRouter);
-app.use(notFoundMiddleware)
-app.use(errorMiddleware)
+app.use(notFoundMiddleware);
+app.use(errorMiddleware);
 
 app.get("/health", (_req, res) => {
     res.status(200).json({
