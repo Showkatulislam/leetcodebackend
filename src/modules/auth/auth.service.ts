@@ -1,9 +1,10 @@
 import { AppError } from "../../errors/app-error.js";
-import { generateAccessToken } from "../../utils/jwt.js";
+import { generateAccessToken, generateRefreshToken } from "../../utils/jwt.js";
 import { hashPassword, verifyPassword } from "../../utils/password.js";
+import { hashToken } from "../../utils/token.js";
 import { authRepository } from "./auth.repository.js";
 import { RegisterInput } from "./auth.types.js";
-import { LoginInput } from "./auth.validation.js";
+import { LoginInput, LogoutInput } from "./auth.validation.js";
 
 export class AuthService {
     async register(data: RegisterInput) {
@@ -56,6 +57,24 @@ export class AuthService {
             role:user.role
         })
 
+        const refreshToken =generateRefreshToken({
+            sub:user.id
+        })
+
+        const refreshTokenHash = hashToken(refreshToken)
+
+        const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+        await authRepository.createRefreshToken({
+            tokenHash:refreshTokenHash,
+            user:{
+                connect:{
+                    id:user.id
+                }
+            },
+            expiresAt
+        })
+
         return {
             user:{
             id: user.id,
@@ -66,8 +85,24 @@ export class AuthService {
             isActive: user.isActive,
             createdAt: user.createdAt,
         },
-        accessToken
+        accessToken,
+        refreshToken
         }
+    }
+
+    async logout(data:LogoutInput):Promise<void>{
+        const tokenHash = hashToken(data.refreshToken);
+
+        const refreshToken = await authRepository.findRefreshTokenByHash(tokenHash);
+
+        if(!refreshToken){
+            return;
+        }
+
+        if(refreshToken.revokedAt){
+            return
+        }
+        await authRepository.revokeRefreshToken(refreshToken.id);
     }
 }
 

@@ -8,6 +8,9 @@ export interface AccessTokenPayload {
     sub: string;
     role: string;
 }
+export interface RefreshTokenPayload {
+    sub: string;
+}
 
 export const generateAccessToken = (
     payload: AccessTokenPayload,
@@ -19,5 +22,17 @@ export const generateAccessToken = (
         payload,
         env.jwt.accessSecret,
         expiresIn ? { expiresIn } : {},
+    );
+};
+
+export const generateRefreshToken = (
+    payload: RefreshTokenPayload,
+): string => {
+ const expiresIn = env.jwt.refreshExpiresIn as SignOptions["expiresIn"];
+
+    return jwt.sign(
+        payload,
+        env.jwt.refreshSecret,
+        expiresIn?{expiresIn}:{}
     );
 };

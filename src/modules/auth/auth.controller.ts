@@ -24,6 +24,16 @@ export class AuthController {
             data:user
         })
     });
+
+    logout = catchAsync(async(req,res)=>{
+        await authService.logout(req.body);
+        sendResponse(res,{
+            success:true,
+            message:"Logout successfully.",
+            statusCode:200,
+            data:null
+        })
+    })
 }
 
 export const authController = new AuthController();
