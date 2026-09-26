@@ -1,4 +1,4 @@
-import { Prisma, RefreshToken, User } from "../../../generated/prisma/client.js";
+import { PasswordResetToken, Prisma, RefreshToken, User } from "../../../generated/prisma/client.js";
 import prisma from "../../lib/prisma.js";
 import { IAuthRepository } from "./auth.interface.js";
 
@@ -47,6 +47,12 @@ export class AuthRepository implements IAuthRepository {
             data:{
                 revokedAt:new Date()
             }
+        })
+    }
+
+    async createPasswordResetToken(data: Prisma.PasswordResetTokenCreateInput): Promise<PasswordResetToken> {
+        return prisma.passwordResetToken.create({
+            data
         })
     }
 

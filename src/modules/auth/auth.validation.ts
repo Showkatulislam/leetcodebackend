@@ -25,6 +25,13 @@ export const logoutSchema = z.object({
         .string()
         .min(1, "Refresh token is required"),
 });
+export const forgotPasswordSchema = z.object({
+    email: z
+        .string()
+        .email("Invalid email address")
+        .trim()
+        .toLowerCase(),
+});
 
 
 export type RegisterInput = z.infer<typeof registerSchema>;
@@ -32,3 +39,5 @@ export type LoginInput = z.infer<typeof loginSchema>;
 export type LogoutInput = z.infer<
     typeof logoutSchema
 >;
+export type ForgotPasswordInput =
+    z.infer<typeof forgotPasswordSchema>;

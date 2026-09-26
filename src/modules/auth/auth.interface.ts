@@ -1,4 +1,4 @@
-import { Prisma, RefreshToken, User } from "../../../generated/prisma/client.js";
+import { PasswordResetToken, Prisma, RefreshToken, User } from "../../../generated/prisma/client.js";
 
 export interface IAuthRepository {
     findUserByEmail(email: string): Promise<User | null>;
@@ -13,4 +13,7 @@ export interface IAuthRepository {
     revokeRefreshToken(
         id:string
     ):Promise<RefreshToken>
+    createPasswordResetToken(
+    data: Prisma.PasswordResetTokenCreateInput,
+): Promise<PasswordResetToken>;
 }

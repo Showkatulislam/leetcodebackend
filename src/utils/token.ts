@@ -1,5 +1,9 @@
 import crypto from "node:crypto";
 
+export const generateRandomToken=(bytes:number=32):string=>{
+    return crypto.randomBytes(bytes).toString("hex")
+}
+
 export const hashToken = (
     token: string,
 ): string => {

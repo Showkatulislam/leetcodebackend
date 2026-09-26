@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import { authController } from "./auth.controller.js";
 import { validate } from "../../middlewares/validate.middleware.js";
-import { loginSchema, logoutSchema, registerSchema } from "./auth.validation.js";
+import { forgotPasswordSchema, loginSchema, logoutSchema, registerSchema } from "./auth.validation.js";
 
 const router = Router();
 
@@ -28,5 +28,10 @@ router.post(
         body:logoutSchema
     }),
     authController.logout
+)
+
+router.post("/forgot-password",
+    validate({body:forgotPasswordSchema}),
+    authController.forgotPassword
 )
 export default router;

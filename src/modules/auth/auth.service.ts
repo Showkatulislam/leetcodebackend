@@ -1,10 +1,10 @@
 import { AppError } from "../../errors/app-error.js";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt.js";
 import { hashPassword, verifyPassword } from "../../utils/password.js";
-import { hashToken } from "../../utils/token.js";
+import { generateRandomToken, hashToken } from "../../utils/token.js";
 import { authRepository } from "./auth.repository.js";
 import { RegisterInput } from "./auth.types.js";
-import { LoginInput, LogoutInput } from "./auth.validation.js";
+import { ForgotPasswordInput, LoginInput, LogoutInput } from "./auth.validation.js";
 
 export class AuthService {
     async register(data: RegisterInput) {
@@ -103,6 +103,30 @@ export class AuthService {
             return
         }
         await authRepository.revokeRefreshToken(refreshToken.id);
+    }
+    async forgotPassword(
+        data:ForgotPasswordInput
+    ):Promise<void>{
+        const user = await authRepository.findUserByEmail(data.email);
+
+        if(!user){
+            return;
+        }
+
+        const resetToken = generateRandomToken();
+
+        const tokenHash = hashToken(resetToken);
+        const expiresAt = new Date(Date.now()+15*60*1000)
+        await authRepository.createPasswordResetToken({
+            tokenHash,
+            expiresAt,
+            user:{
+                connect:{
+                    id:user.id
+                }
+            }
+        })
+
     }
 }
 

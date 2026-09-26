@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { authService } from "./auth.service.js";
 import { catchAsync } from "../../shared/utils/catch.async.js";
 import { sendResponse } from "../../shared/utils/send-response.js";
+import { success } from 'zod';
 
 export class AuthController {
     register = catchAsync(async (req: Request, res: Response): Promise<void> => {
@@ -34,6 +35,18 @@ export class AuthController {
             data:null
         })
     })
+
+    forgotPassword = catchAsync(async(req,res)=>{
+        await authService.forgotPassword(req.body);
+    sendResponse(res,{
+        success:true,
+      message:
+            "If the email exists, a password reset link has been sent",
+        data: null,
+        statusCode:200
+    })
+    })
+
 }
 
 export const authController = new AuthController();
