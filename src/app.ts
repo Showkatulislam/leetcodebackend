@@ -7,6 +7,7 @@ import { notFoundMiddleware } from "./middlewares/not-found.middleware.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 import { requestLogger } from "./middlewares/request-logger.middleware.js";
 import env from "./config/env.js";
+import { globalRateLimiter } from "./middlewares/rate-limit.middleware.js";
 
 const app = express();
 
@@ -41,6 +42,8 @@ app.use(
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 
 app.use(cookieParser());
+
+app.use(globalRateLimiter);
 
 app.use("/api/v1", apiRouter);
 app.use(notFoundMiddleware);

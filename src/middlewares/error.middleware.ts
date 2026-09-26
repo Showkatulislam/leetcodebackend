@@ -4,12 +4,7 @@ import { success } from "zod";
 import env from "../config/env.js";
 import { logger } from "../lib/logger.js";
 
-export const errorMiddleware: ErrorRequestHandler = (
-    error,
-    _req,
-    res,
-    _next,
-): void => {
+export const errorMiddleware: ErrorRequestHandler = (error, _req, res, _next): void => {
     if (error instanceof AppError) {
         logger.warn(
             {
@@ -42,7 +37,7 @@ export const errorMiddleware: ErrorRequestHandler = (
             env.server.nodeEnv === "production"
                 ? "Internal server error"
                 : error instanceof Error
-                    ? error.message
-                    : "Internal server error",
+                  ? error.message
+                  : "Internal server error",
     });
 };
