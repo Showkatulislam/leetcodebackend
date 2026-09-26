@@ -17,3 +17,7 @@ logs/
 .vscode/
 .idea/
 /generated/prisma
+.agents
+.claude
+.windsurt
+generated
