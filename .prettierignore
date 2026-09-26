@@ -2,3 +2,7 @@ node_modules
 dist
 coverage
 logs
+.agents
+.claude
+.windsurt
+generated

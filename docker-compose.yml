@@ -1,15 +1,44 @@
+
 services:
-    api:
-        build:
-            context: .
-            target: production
+  postgres:
+    image: postgres:17
+    container_name: ecommerce-postgres
+    restart: unless-stopped
 
-        container_name: online-judge-api
+    environment:
+      POSTGRES_DB: leetcode_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
 
-        ports:
-            - "5000:5000"
+    ports:
+      - "5432:5432"
 
-        env_file:
-            - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
-        restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecommerce_user -d ecommerce_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: ecommerce-redis
+    restart: unless-stopped
+
+    ports:
+      - "6379:6379"
+
+    volumes:
+      - redis_data:/data
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:
