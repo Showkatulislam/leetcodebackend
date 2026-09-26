@@ -65,16 +65,14 @@ export const problems = [
     {
         title: "Valid Parentheses",
         slug: "valid-parentheses",
-        description:
-            "Determine whether the input string has valid matching brackets.",
+        description: "Determine whether the input string has valid matching brackets.",
         difficulty: "EASY",
         isPublished: true,
     },
     {
         title: "Binary Search",
         slug: "binary-search",
-        description:
-            "Given a sorted array, search for a target value.",
+        description: "Given a sorted array, search for a target value.",
         difficulty: "EASY",
         isPublished: true,
     },

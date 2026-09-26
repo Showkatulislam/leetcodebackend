@@ -1,30 +1,29 @@
 import { AppError } from "../../errors/app-error.js";
-import { hashPassword } from "../../utils/password.js";
+import { hashPassword, verifyPassword } from "../../utils/password.js";
 import { authRepository } from "./auth.repository.js";
 import { RegisterInput } from "./auth.types.js";
+import { LoginInput } from "./auth.validation.js";
 
 export class AuthService {
-    async register(
-        data:RegisterInput
-    ){
+    async register(data: RegisterInput) {
         const existingEmail = await authRepository.findUserByEmail(data.email);
 
-        if(existingEmail){
-            throw new AppError("User already Exist",404,"EMAIL_EXIST")
+        if (existingEmail) {
+            throw new AppError("User already Exist", 404, "EMAIL_EXIST");
         }
-        const existingUsername = await authRepository.findUserByUsername(data.username)
+        const existingUsername = await authRepository.findUserByUsername(data.username);
 
-        if(existingUsername){
-            throw new AppError("UserName already Exist",404,"USERNAME_EXIST")    
+        if (existingUsername) {
+            throw new AppError("UserName already Exist", 404, "USERNAME_EXIST");
         }
 
         const passwordHash = await hashPassword(data.password);
 
-        data.password = passwordHash
+        data.password = passwordHash;
 
-        const user = await authRepository.createUser(data)
+        const user = await authRepository.createUser(data);
 
-             return {
+        return {
             id: user.id,
             username: user.username,
             email: user.email,
@@ -34,6 +33,31 @@ export class AuthService {
             createdAt: user.createdAt,
         };
     }
+
+    async login(data: LoginInput) {
+        const user = await authRepository.findUserByEmail(data.email);
+        if (!user) {
+            throw new AppError("Invalid email or password", 401, "");
+        }
+
+        if (!user.isActive) {
+            throw new AppError("Account is inactive", 403, "");
+        }
+
+        const isPasswordValid = await verifyPassword(data.password, user.password);
+
+        if (!isPasswordValid) {
+            throw new AppError("Invalid email or password", 401, "");
+        }
+        return {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+            isVerified: user.isVerified,
+            isActive: user.isActive,
+        };
+    }
 }
 
-export const authService = new AuthService()
+export const authService = new AuthService();

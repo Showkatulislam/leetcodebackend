@@ -17,4 +17,4 @@ const prisma = new PrismaClient({
     adapter,
 });
 
-export default prisma
+export default prisma;
