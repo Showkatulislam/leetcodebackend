@@ -1,0 +1,15 @@
+services:
+    api:
+        build:
+            context: .
+            target: production
+
+        container_name: online-judge-api
+
+        ports:
+            - "5000:5000"
+
+        env_file:
+            - .env
+
+        restart: unless-stopped
