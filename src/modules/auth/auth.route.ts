@@ -2,7 +2,16 @@ import { Router } from "express";
 
 import { authController } from "./auth.controller.js";
 import { validate } from "../../middlewares/validate.middleware.js";
-import { forgotPasswordSchema, loginSchema, logoutSchema, registerSchema } from "./auth.validation.js";
+import {
+    forgotPasswordSchema,
+    loginSchema,
+    logoutSchema,
+    registerSchema,
+    resendVerificationSchema,
+    resetPasswordSchema,
+    verifyEmailSchema,
+} from "./auth.validation.js";
+import { resendVerificationRateLimiter } from "../../middlewares/rate-limit.middleware.js";
 
 const router = Router();
 
@@ -17,21 +26,46 @@ router.post(
 router.post(
     "/login",
     validate({
-        body:loginSchema
+        body: loginSchema,
     }),
-    authController.login
-)
+    authController.login,
+);
 
 router.post(
     "/logout",
     validate({
-        body:logoutSchema
+        body: logoutSchema,
     }),
-    authController.logout
+    authController.logout,
+);
+
+router.post(
+    "/forgot-password",
+    validate({ body: forgotPasswordSchema }),
+    authController.forgotPassword,
+);
+
+router.post(
+    "/reset-password",
+    validate({
+        body: resetPasswordSchema,
+    }),
+    authController.resetPassword,
+);
+
+router.post(
+    "/verify-email",
+    validate({body:verifyEmailSchema}),
+    authController.verifyEmail
+);
+router.post(
+    "/resend-verification",
+    resendVerificationRateLimiter,
+    validate({
+        body:resendVerificationSchema
+    }),
+    authController.resendVerification
 )
 
-router.post("/forgot-password",
-    validate({body:forgotPasswordSchema}),
-    authController.forgotPassword
-)
+
 export default router;

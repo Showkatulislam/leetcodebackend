@@ -48,3 +48,16 @@ export const passwordResetRateLimiter = rateLimit({
         errorCode: "PASSWORD_RESET_RATE_LIMIT_EXCEEDED",
     },
 });
+
+export const resendVerificationRateLimiter =
+    rateLimit({
+        windowMs: 15 * 60 * 1000,
+        limit: 5,
+        standardHeaders: true,
+        legacyHeaders: false,
+        message: {
+            success: false,
+            message:
+                "Too many verification requests. Please try again later.",
+        },
+    });

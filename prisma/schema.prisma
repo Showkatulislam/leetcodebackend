@@ -67,6 +67,7 @@ model EmailVerificationToken {
 
   expiresAt  DateTime
   usedAt     DateTime?
+   revokedAt  DateTime?
 
   createdAt  DateTime  @default(now())
 

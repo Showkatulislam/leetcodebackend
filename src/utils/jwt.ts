@@ -1,8 +1,6 @@
-import jwt, {
-    type SignOptions,
-} from "jsonwebtoken";
+import jwt, { type SignOptions } from "jsonwebtoken";
 
-import  env  from "../config/env.js";
+import env from "../config/env.js";
 
 export interface AccessTokenPayload {
     sub: string;
@@ -12,27 +10,14 @@ export interface RefreshTokenPayload {
     sub: string;
 }
 
-export const generateAccessToken = (
-    payload: AccessTokenPayload,
-): string => {
+export const generateAccessToken = (payload: AccessTokenPayload): string => {
+    const expiresIn = env.jwt.accessExpiresIn as SignOptions["expiresIn"];
 
- const expiresIn = env.jwt.accessExpiresIn as SignOptions["expiresIn"];
-
-    return jwt.sign(
-        payload,
-        env.jwt.accessSecret,
-        expiresIn ? { expiresIn } : {},
-    );
+    return jwt.sign(payload, env.jwt.accessSecret, expiresIn ? { expiresIn } : {});
 };
 
-export const generateRefreshToken = (
-    payload: RefreshTokenPayload,
-): string => {
- const expiresIn = env.jwt.refreshExpiresIn as SignOptions["expiresIn"];
+export const generateRefreshToken = (payload: RefreshTokenPayload): string => {
+    const expiresIn = env.jwt.refreshExpiresIn as SignOptions["expiresIn"];
 
-    return jwt.sign(
-        payload,
-        env.jwt.refreshSecret,
-        expiresIn?{expiresIn}:{}
-    );
+    return jwt.sign(payload, env.jwt.refreshSecret, expiresIn ? { expiresIn } : {});
 };
