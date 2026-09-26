@@ -1,0 +1,264 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum SubmissionStatus {
+  PENDING
+  RUNNING
+  ACCEPTED
+  WRONG_ANSWER
+  TIME_LIMIT_EXCEEDED
+  MEMORY_LIMIT_EXCEEDED
+  COMPILATION_ERROR
+  RUNTIME_ERROR
+  SYSTEM_ERROR
+}
+
+model User {
+  id       String   @id @default(uuid())
+  username String   @unique
+  email    String   @unique
+  password String
+  role     UserRole @default(USER)
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+
+  submissions         Submission[]
+  bookmarks           Bookmark[]
+  contestParticipants ContestParticipant[]
+
+  @@index([username, createdAt])
+  @@map("users")
+}
+
+model Problem {
+  id          String @id @default(uuid())
+  title       String
+  slug        String @unique
+  description String
+
+  difficulty Difficulty
+
+  isPublished Boolean @default(false)
+
+  timeLimit   Int
+  memoryLimit Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  testCases       TestCase[]
+  submissions     Submission[]
+  bookmarks       Bookmark[]
+  tags            ProblemTag[]
+  languages       ProblemLanguage[]
+  contestProblems ContestProblem[]
+
+  @@index([difficulty])
+  @@index([isPublished])
+  @@index([createdAt])
+  @@map("problems")
+}
+
+model Tag {
+  id   String @id @default(uuid())
+  name String @unique
+  slug String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  problems ProblemTag[]
+
+  @@map("tags")
+}
+
+model ProblemTag {
+  problemId String
+  tagId     String
+
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([problemId, tagId])
+  @@index([tagId])
+  @@map("problem_tags")
+}
+
+model TestCase {
+  id String @id @default(uuid())
+
+  problemId String
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  input    String
+  expected String
+
+  isPublic Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([problemId])
+  @@map("test_cases")
+}
+
+model Language {
+  id String @id @default(uuid())
+
+  name String
+  slug String @unique
+
+  version  String?
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  submissions Submission[]
+  problems    ProblemLanguage[]
+
+  @@unique([name, version])
+  @@map("languages")
+}
+
+model ProblemLanguage {
+  problemId  String
+  languageId String
+
+  template String? @db.Text
+
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  language Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+  @@id([problemId, languageId])
+  @@index([languageId])
+  @@map("problem_languages")
+}
+
+model Submission {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  problemId String
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  languageId String
+  language   Language @relation(fields: [languageId], references: [id])
+
+  code String @db.Text
+
+  status SubmissionStatus @default(PENDING)
+
+  runtime     Int?
+  memoryUsage Int?
+
+  errorMessage String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([problemId])
+  @@index([languageId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("submissions")
+}
+
+model Bookmark {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  problemId String
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, problemId])
+  @@index([problemId])
+  @@map("bookmarks")
+}
+
+model Contest {
+  id String @id @default(uuid())
+
+  title       String
+  slug        String  @unique
+  description String? @db.Text
+
+  startAt DateTime
+  endAt   DateTime
+
+  isPublished Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  problems     ContestProblem[]
+  participants ContestParticipant[]
+
+  @@index([startAt])
+  @@index([endAt])
+  @@index([isPublished])
+  @@map("contests")
+}
+
+model ContestProblem {
+  contestId String
+  problemId String
+
+  contest Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  order Int
+
+  points Int @default(100)
+
+  @@id([contestId, problemId])
+  @@index([problemId])
+  @@map("contest_problems")
+}
+
+model ContestParticipant {
+  contestId String
+  userId    String
+
+  contest Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  joinedAt DateTime @default(now())
+
+  @@id([contestId, userId])
+  @@index([userId])
+  @@map("contest_participants")
+}
