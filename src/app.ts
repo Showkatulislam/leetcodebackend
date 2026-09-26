@@ -6,21 +6,31 @@ import apiRouter from "./routes/index.js";
 import { notFoundMiddleware } from "./middlewares/not-found.middleware.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 import { requestLogger } from "./middlewares/request-logger.middleware.js";
+import env from "./config/env.js";
 
 const app = express();
 
-app.use(requestLogger)
+if (env.server.nodeEnv === "production") {
+    app.set("trust proxy", 1);
+}
 
+app.use(requestLogger);
 
-app.use(helmet());
+app.use(
+    helmet({
+        contentSecurityPolicy: env.server.nodeEnv === "production",
+        crossOriginEmbedderPolicy: false,
+    }),
+);
 
 app.use(
     cors({
         origin: true,
         credentials: true,
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
     }),
 );
-
 
 app.use(
     express.json({
