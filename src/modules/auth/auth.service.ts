@@ -1,4 +1,5 @@
 import { AppError } from "../../errors/app-error.js";
+import { generateAccessToken } from "../../utils/jwt.js";
 import { hashPassword, verifyPassword } from "../../utils/password.js";
 import { authRepository } from "./auth.repository.js";
 import { RegisterInput } from "./auth.types.js";
@@ -49,14 +50,24 @@ export class AuthService {
         if (!isPasswordValid) {
             throw new AppError("Invalid email or password", 401, "");
         }
+
+        const accessToken = generateAccessToken({
+            sub:user.id,
+            role:user.role
+        })
+
         return {
+            user:{
             id: user.id,
             username: user.username,
             email: user.email,
             role: user.role,
             isVerified: user.isVerified,
             isActive: user.isActive,
-        };
+            createdAt: user.createdAt,
+        },
+        accessToken
+        }
     }
 }
 
