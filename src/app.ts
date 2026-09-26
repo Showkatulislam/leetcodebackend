@@ -36,7 +36,7 @@ app.use(
 
 app.use(
     express.json({
-        limit: "1md",
+        limit: "1mb",
     }),
 );
 
