@@ -24,6 +24,8 @@
     "dependencies": {
         "@prisma/adapter-pg": "^7.10.0",
         "@prisma/client": "^7.10.0",
+        "@types/argon2": "^0.14.1",
+        "argon2": "^0.45.1",
         "bcryptjs": "^3.0.3",
         "cookie-parser": "^1.4.7",
         "cors": "^2.8.6",
