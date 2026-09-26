@@ -8,6 +8,7 @@ import { errorMiddleware } from "./middlewares/error.middleware.js";
 import { requestLogger } from "./middlewares/request-logger.middleware.js";
 import env from "./config/env.js";
 import { globalRateLimiter } from "./middlewares/rate-limit.middleware.js";
+import { swaggerMiddleware } from "./middlewares/swagger.middleware.js";
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use(cookieParser());
 
 app.use(globalRateLimiter);
 
+app.use("/api-docs", ...swaggerMiddleware);
 app.use("/api/v1", apiRouter);
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
