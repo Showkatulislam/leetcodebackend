@@ -1,27 +1,130 @@
-import { AppError } from "../../errors/app-error.js";
-import { problemRepository } from "./problem.repository.js";
-import { CreateProblemInput } from "./problem.schema.js";
-class ProblemService{
-    async createProblem(
-        data:CreateProblemInput
-    ){
-        const existingProblem = await problemRepository.findBySlug(data.slug);
 
-        if(existingProblem){
-            throw new AppError("A Problem with this slug already exists",409,"")
+import {
+    problemRepository,
+} from "./problem.repository.js";
+
+import {
+    ICreateProblemData,
+    IUpdateProblemData,
+} from "./problem.interface.js";
+import { AppError } from "../../errors/app-error.js";
+
+class ProblemService {
+    async createProblem(
+        data: ICreateProblemData,
+    ) {
+        const existingProblem =
+            await problemRepository.getProblemBySlug(
+                data.slug,
+            );
+
+        if (existingProblem) {
+            throw new AppError(
+                "A problem with this slug already exists",
+                 409,
+                 ""
+            );
         }
 
-        const problem = await problemRepository.create({
-            title:data.title,
-            slug:data.slug,
-            description:data.description,
-            difficulty:data.difficulty,
-            timeLimit:data.timeLimit,
-            memoryLimit:data.memoryLimit,
-            isPublished:data.isPublished??false
-        })
-        return problem
+        return problemRepository.createProblem(data);
+    }
+
+    async updateProblem(
+        id: string,
+        data: IUpdateProblemData,
+    ) {
+        const existingProblem =
+            await problemRepository.getProblemById(id);
+
+        if (!existingProblem) {
+            throw new AppError(
+                "Problem not found",
+                404,
+                 ""
+            );
+        }
+
+        if (data.slug) {
+            const problemWithSlug =
+                await problemRepository.getProblemBySlug(
+                    data.slug,
+                );
+
+            if (
+                problemWithSlug &&
+                problemWithSlug.id !== id
+            ) {
+                throw new AppError(
+                    "A problem with this slug already exists",
+                    409,
+                 ""
+                );
+            }
+        }
+
+        return problemRepository.updateProblem(
+            id,
+            data,
+        );
+    }
+
+    async deleteProblem(
+        id: string,
+    ) {
+        const existingProblem =
+            await problemRepository.getProblemById(id);
+
+        if (!existingProblem) {
+            throw new AppError(
+                "Problem not found",
+                                 404,
+                 ""
+            );
+        }
+
+        return problemRepository.deleteProblem(id);
+    }
+
+    async getProblemById(
+        id: string,
+    ) {
+        const problem =
+            await problemRepository.getProblemById(id);
+
+        if (!problem) {
+            throw new AppError(
+                "Problem not found",
+                 404,
+                 ""
+            );
+        }
+
+        return problem;
+    }
+
+    async getProblemBySlug(
+        slug: string,
+    ) {
+        const problem =
+            await problemRepository.getProblemBySlug(
+                slug,
+            );
+
+        if (!problem) {
+            throw new AppError(
+                "Problem not found",
+                404,
+                 ""
+            );
+        }
+
+        return problem;
+    }
+
+    async getProblems() {
+        return problemRepository.getProblems();
     }
 }
 
-export const problemService = new ProblemService()
+export const problemService =
+    new ProblemService();
