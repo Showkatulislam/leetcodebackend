@@ -49,15 +49,13 @@ export const passwordResetRateLimiter = rateLimit({
     },
 });
 
-export const resendVerificationRateLimiter =
-    rateLimit({
-        windowMs: 15 * 60 * 1000,
-        limit: 5,
-        standardHeaders: true,
-        legacyHeaders: false,
-        message: {
-            success: false,
-            message:
-                "Too many verification requests. Please try again later.",
-        },
-    });
+export const resendVerificationRateLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 5,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        success: false,
+        message: "Too many verification requests. Please try again later.",
+    },
+});

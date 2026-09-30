@@ -55,31 +55,25 @@ export class AuthController {
         });
     });
 
-    verifyEmail=catchAsync(async(req,res):Promise<void>=>{
+    verifyEmail = catchAsync(async (req, res): Promise<void> => {
         await authService.verifyEmail(req.body);
-        sendResponse(res,{
-                success: true,
-        message: "Email verified successfully",
-        data: null,
-        statusCode:200,
-        })
-    })
-    resendVerification = catchAsync(async(
-    req: Request,
-    res: Response,
-): Promise<void> =>{
-    await authService.resendVerification(
-        req.body,
-    );
-
-    sendResponse(res,{
-        statusCode:200,
-        success: true,
-        message:
-            "If the email requires verification, a verification link has been sent",
-        data: null,
+        sendResponse(res, {
+            success: true,
+            message: "Email verified successfully",
+            data: null,
+            statusCode: 200,
+        });
     });
-})
+    resendVerification = catchAsync(async (req: Request, res: Response): Promise<void> => {
+        await authService.resendVerification(req.body);
+
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            message: "If the email requires verification, a verification link has been sent",
+            data: null,
+        });
+    });
 }
 
 export const authController = new AuthController();

@@ -1,28 +1,47 @@
-import { Prisma } from "../../../generated/prisma/client.js";
+import { Problem } from "../../../generated/prisma/client.js";
+import { Difficulty } from "../../../generated/prisma/enums.js";
 
+export interface ICreateProblemData {
+    title: string;
+    slug: string;
+    description: string;
+    difficulty: Difficulty;
+    isPublished?: boolean;
+    timeLimit: number;
+    memoryLimit: number;
+}
 
-export type ProblemWithRelations = Prisma.ProblemGetPayload<{
-    include: {
-        tags: true;
-        languages: true;
-    };
-}>;
+export interface IUpdateProblemData {
+    title?: string;
+    slug?: string;
+    description?: string;
+    difficulty?: Difficulty;
+    isPublished?: boolean;
+    timeLimit?: number;
+    memoryLimit?: number;
+}
 
 export interface IProblemRepository {
-    create(
-        data: Prisma.ProblemCreateInput,
-    ): Promise<ProblemWithRelations>;
+    createProblem(
+        data: ICreateProblemData,
+    ): Promise<Problem>;
 
-    update(
+    updateProblem(
         id: string,
-        data: Prisma.ProblemUpdateInput,
-    ): Promise<ProblemWithRelations>;
+        data: IUpdateProblemData,
+    ): Promise<Problem>;
 
-    delete(id: string): Promise<ProblemWithRelations>;
+    deleteProblem(
+        id: string,
+    ): Promise<Problem>;
 
-    findById(id: string): Promise<ProblemWithRelations | null>;
+    getProblemById(
+        id: string,
+    ): Promise<Problem | null>;
 
-    findBySlug(slug: string): Promise<ProblemWithRelations | null>;
+    getProblemBySlug(
+        slug: string,
+    ): Promise<Problem | null>;
 
-    findAll(): Promise<ProblemWithRelations[]>;
+    getProblems(): Promise<Problem[]>;
 }

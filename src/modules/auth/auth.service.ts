@@ -193,50 +193,37 @@ export class AuthService {
 
         await authRepository.markEmailVerificationTokenAsUsed(verificationToken.id);
     }
-    async resendVerification(
-    data: ResendVerificationInput,
-): Promise<void> {
-    const user =
-        await authRepository.findUserByEmail(
-            data.email,
-        );
+    async resendVerification(data: ResendVerificationInput): Promise<void> {
+        const user = await authRepository.findUserByEmail(data.email);
 
-    if (!user) {
-        return;
-    }
+        if (!user) {
+            return;
+        }
 
-    if (user.isVerified) {
-        return;
-    }
+        if (user.isVerified) {
+            return;
+        }
 
-    await authRepository.revokeEmailVerificationTokens(
-        user.id,
-    );
+        await authRepository.revokeEmailVerificationTokens(user.id);
 
-    const verificationToken =
-        generateRandomToken();
+        const verificationToken = generateRandomToken();
 
-    const tokenHash =
-        hashToken(verificationToken);
+        const tokenHash = hashToken(verificationToken);
 
-    const expiresAt =
-        new Date(
-            Date.now() +
-            24 * 60 * 60 * 1000,
-        );
+        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-    await authRepository.createEmailVerificationToken({
-        tokenHash,
-        expiresAt,
-        user: {
-            connect: {
-                id: user.id,
+        await authRepository.createEmailVerificationToken({
+            tokenHash,
+            expiresAt,
+            user: {
+                connect: {
+                    id: user.id,
+                },
             },
-        },
-    });
+        });
 
-    // Send verificationToken by email.
-}
+        // Send verificationToken by email.
+    }
 }
 
 export const authService = new AuthService();

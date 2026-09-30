@@ -140,11 +140,8 @@ export class AuthRepository implements IAuthRepository {
             },
         });
     }
-    async revokeEmailVerificationTokens(
-    userId: string,
-): Promise<number> {
-    const result =
-        await prisma.emailVerificationToken.updateMany({
+    async revokeEmailVerificationTokens(userId: string): Promise<number> {
+        const result = await prisma.emailVerificationToken.updateMany({
             where: {
                 userId,
                 usedAt: null,
@@ -155,8 +152,8 @@ export class AuthRepository implements IAuthRepository {
             },
         });
 
-    return result.count;
-}
+        return result.count;
+    }
 }
 
 export const authRepository = new AuthRepository();

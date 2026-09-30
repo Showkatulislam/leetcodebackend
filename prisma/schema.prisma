@@ -45,6 +45,9 @@ model User {
   isVerified Boolean @default(false)
   isActive Boolean @default(true)
 
+  avatar String?
+  bio String?
+
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
 
@@ -112,7 +115,7 @@ model Problem {
   id          String @id @default(uuid())
   title       String
   slug        String @unique
-  description String
+  description String  @db.Text
 
   difficulty Difficulty
 

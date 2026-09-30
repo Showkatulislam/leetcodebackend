@@ -32,7 +32,5 @@ export interface IAuthRepository {
     markEmailVerificationTokenAsUsed(id: string): Promise<EmailVerificationToken>;
 
     verifyUserEmail(userId: string): Promise<User>;
-    revokeEmailVerificationTokens(
-    userId: string,
-): Promise<number>;
+    revokeEmailVerificationTokens(userId: string): Promise<number>;
 }

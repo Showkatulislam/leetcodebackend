@@ -53,19 +53,14 @@ router.post(
     authController.resetPassword,
 );
 
-router.post(
-    "/verify-email",
-    validate({body:verifyEmailSchema}),
-    authController.verifyEmail
-);
+router.post("/verify-email", validate({ body: verifyEmailSchema }), authController.verifyEmail);
 router.post(
     "/resend-verification",
     resendVerificationRateLimiter,
     validate({
-        body:resendVerificationSchema
+        body: resendVerificationSchema,
     }),
-    authController.resendVerification
-)
-
+    authController.resendVerification,
+);
 
 export default router;
