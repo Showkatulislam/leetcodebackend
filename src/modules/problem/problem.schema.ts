@@ -4,14 +4,14 @@ export const createProblemSchema = z.object({
     title: z
         .string()
         .trim()
-        .min(1, "Problem title is required")
-        .max(200, "Problem title must not exceed 200 characters"),
+        .min(3, "Title must be at least 3 characters")
+        .max(200, "Title cannot exceed 200 characters"),
 
     slug: z
         .string()
         .trim()
-        .min(1, "Problem slug is required")
-        .max(200, "Problem slug must not exceed 200 characters")
+        .min(3, "Slug must be at least 3 characters")
+        .max(200, "Slug cannot exceed 200 characters")
         .regex(
             /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
             "Slug must contain only lowercase letters, numbers, and hyphens",
@@ -20,21 +20,106 @@ export const createProblemSchema = z.object({
     description: z
         .string()
         .trim()
-        .min(1, "Problem description is required"),
+        .min(
+            10,
+            "Description must be at least 10 characters",
+        ),
 
-    difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
+    difficulty: z.enum([
+        "EASY",
+        "MEDIUM",
+        "HARD",
+    ]),
+
+    isPublished: z
+        .boolean()
+        .optional(),
 
     timeLimit: z
         .number()
         .int()
-        .positive("Time limit must be greater than 0"),
+        .positive(),
 
     memoryLimit: z
         .number()
         .int()
-        .positive("Memory limit must be greater than 0"),
-
-    isPublished: z.boolean().optional(),
+        .positive(),
 });
 
-export type CreateProblemInput = z.infer<typeof createProblemSchema>;
+export const updateProblemSchema = z
+    .object({
+        title: z
+            .string()
+            .trim()
+            .min(
+                3,
+                "Title must be at least 3 characters",
+            )
+            .max(
+                200,
+                "Title cannot exceed 200 characters",
+            )
+            .optional(),
+
+        slug: z
+            .string()
+            .trim()
+            .min(
+                3,
+                "Slug must be at least 3 characters",
+            )
+            .max(
+                200,
+                "Slug cannot exceed 200 characters",
+            )
+            .regex(
+                /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+                "Slug must contain only lowercase letters, numbers, and hyphens",
+            )
+            .optional(),
+
+        description: z
+            .string()
+            .trim()
+            .min(
+                10,
+                "Description must be at least 10 characters",
+            )
+            .optional(),
+
+        difficulty: z
+            .enum([
+                "EASY",
+                "MEDIUM",
+                "HARD",
+            ])
+            .optional(),
+
+        isPublished: z
+            .boolean()
+            .optional(),
+
+        timeLimit: z
+            .number()
+            .int()
+            .positive()
+            .optional(),
+
+        memoryLimit: z
+            .number()
+            .int()
+            .positive()
+            .optional(),
+    })
+    .refine(
+        (data) => Object.keys(data).length > 0,
+        {
+            message: "At least one field is required",
+        },
+    );
+
+export const problemIdSchema = z.object({
+    id: z
+        .string()
+        .uuid("Invalid problem ID"),
+});
