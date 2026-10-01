@@ -124,6 +124,7 @@ class ProblemService {
     async getProblems() {
         return problemRepository.getProblems();
     }
+
     async searchProblems(
     search: string,
 ): Promise<Problem[]> {
@@ -131,6 +132,15 @@ class ProblemService {
         search,
     );
 }
+
+async filterProblems(
+    difficulty?: "EASY" | "MEDIUM" | "HARD",
+): Promise<Problem[]> {
+    return problemRepository.filterProblems(
+        difficulty,
+    );
+}
+
 }
 
 export const problemService =

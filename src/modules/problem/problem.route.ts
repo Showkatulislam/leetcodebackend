@@ -5,7 +5,7 @@ import { validate } from "../../middlewares/validate.middleware.js";
 import { catchAsync } from "../../shared/utils/catch.async.js";
 import router from "../test/test.route.js";
 import { problemController } from "./problem.controller.js";
-import { createProblemSchema, problemIdSchema, problemSearchSchema, updateProblemSchema } from "./problem.schema.js";
+import { createProblemSchema, problemFilterSchema, problemIdSchema, problemSearchSchema, updateProblemSchema } from "./problem.schema.js";
 
 router.post(
   "/",
@@ -66,6 +66,18 @@ router.get(
     }),
     catchAsync(
         problemController.searchProblems.bind(
+            problemController,
+        ),
+    ),
+);
+
+router.get(
+    "/filter",
+    validate({
+        query: problemFilterSchema,
+    }),
+    catchAsync(
+        problemController.filterProblems.bind(
             problemController,
         ),
     ),

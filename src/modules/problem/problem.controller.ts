@@ -101,6 +101,27 @@ async searchProblems(
         data: problems,
     });
 }
+
+async filterProblems(
+    req: Request,
+    res: Response,
+): Promise<void> {
+    const problems =
+        await problemService.filterProblems(
+            req.query.difficulty as
+                | "EASY"
+                | "MEDIUM"
+                | "HARD"
+                | undefined,
+        );
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Problems filtered successfully",
+        data: problems,
+    });
+}
 }
 
 export const problemController =

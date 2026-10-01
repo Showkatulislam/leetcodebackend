@@ -134,3 +134,14 @@ export const problemSearchSchema = z.object({
             "Search query cannot exceed 100 characters",
         ),
 });
+
+
+export const problemFilterSchema = z.object({
+    difficulty: z
+        .enum([
+            "EASY",
+            "MEDIUM",
+            "HARD",
+        ])
+        .optional(),
+});

@@ -1,6 +1,6 @@
 
 
-import { Problem } from "../../../generated/prisma/client.js";
+import { Difficulty, Prisma, Problem } from "../../../generated/prisma/client.js";
 import prisma from "../../lib/prisma.js";
 import type {
     ICreateProblemData,
@@ -81,6 +81,24 @@ class ProblemRepository implements IProblemRepository {
         },
     });
 }
+
+async filterProblems(
+    difficulty?: Difficulty,
+): Promise<Problem[]> {
+    const where: Prisma.ProblemWhereInput = {};
+
+    if (difficulty) {
+        where.difficulty = difficulty;
+    }
+
+    return prisma.problem.findMany({
+        where,
+        orderBy: {
+            createdAt: "desc",
+        },
+    });
+}
+
 }
 
 export const problemRepository =
