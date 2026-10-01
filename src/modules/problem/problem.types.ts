@@ -1,0 +1,3 @@
+    interface ProblemSearchQuery {
+    search: string;
+}

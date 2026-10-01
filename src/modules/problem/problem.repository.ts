@@ -66,6 +66,21 @@ class ProblemRepository implements IProblemRepository {
             },
         });
     }
+    async searchProblems(
+    search: string,
+): Promise<Problem[]> {
+    return prisma.problem.findMany({
+        where: {
+            title: {
+                contains: search,
+                mode: "insensitive",
+            },
+        },
+        orderBy: {
+            createdAt: "desc",
+        },
+    });
+}
 }
 
 export const problemRepository =

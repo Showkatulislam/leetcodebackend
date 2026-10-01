@@ -85,6 +85,22 @@ class ProblemController {
         data: problems,
     });
 }
+async searchProblems(
+    req: Request,
+    res: Response,
+): Promise<void> {
+    const problems =
+        await problemService.searchProblems(
+            req.query.search as string,
+        );
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Problems searched successfully",
+        data: problems,
+    });
+}
 }
 
 export const problemController =

@@ -123,3 +123,14 @@ export const problemIdSchema = z.object({
         .string()
         .uuid("Invalid problem ID"),
 });
+
+export const problemSearchSchema = z.object({
+    search: z
+        .string()
+        .trim()
+        .min(1, "Search query cannot be empty")
+        .max(
+            100,
+            "Search query cannot exceed 100 characters",
+        ),
+});

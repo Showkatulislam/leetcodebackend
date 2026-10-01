@@ -7,6 +7,7 @@ import {
     IUpdateProblemData,
 } from "./problem.interface.js";
 import { AppError } from "../../errors/app-error.js";
+import { Problem } from "../../../generated/prisma/client.js";
 
 class ProblemService {
     async createProblem(
@@ -123,6 +124,13 @@ class ProblemService {
     async getProblems() {
         return problemRepository.getProblems();
     }
+    async searchProblems(
+    search: string,
+): Promise<Problem[]> {
+    return problemRepository.searchProblems(
+        search,
+    );
+}
 }
 
 export const problemService =
