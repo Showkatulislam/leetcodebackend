@@ -25,5 +25,36 @@ router.patch(
     params: problemIdSchema,
     body: updateProblemSchema,
   }),
-  catchAsync(problemController.updateProblem) // Clean reference - no .bind() required
+  catchAsync(problemController.updateProblem)
+);
+
+router.delete(
+    "/:id",
+    authenticate,
+    authorize(UserRole.ADMIN),
+    validate({
+        params:problemIdSchema
+    }),
+    catchAsync(
+        problemController.deleteProblem.bind(problemController)
+    )
+)
+
+router.get(
+  "/:id",
+  validate({
+    params:problemIdSchema,
+  }),
+  catchAsync(
+    problemController.getProblemById.bind(problemController)
+  )
+)
+
+router.get(
+    "/",
+    catchAsync(
+        problemController.getProblems.bind(
+            problemController,
+        ),
+    ),
 );
