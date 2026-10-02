@@ -38,5 +38,5 @@ export const updateProblemSchema = createProblemSchema.partial().extend({
 
 
 export const problemIdParamsSchema=z.object({
-    id:z.string()
+     id: z.string().uuid("Invalid problem ID"),
 })
