@@ -1,6 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
 import { ZodError, type ZodType } from "zod";
-import { AppError } from "../errors/app-error.js"; // Adjust the import path to match your project
+
+import { AppError } from "../errors/app-error.js";
+
 interface ValidationSchemas {
     body?: ZodType;
     params?: ZodType;
@@ -15,28 +17,24 @@ export const validate = (schemas: ValidationSchemas) => {
             }
 
             if (schemas.params) {
-                const parsedParams = await schemas.params.parseAsync(req.params);
-                req.params = parsedParams as typeof req.params;
+                await schemas.params.parseAsync(req.params);
             }
 
             if (schemas.query) {
-                const parsedQuery = await schemas.query.parseAsync(req.query);
-                req.query = parsedQuery as typeof req.query;
+                await schemas.query.parseAsync(req.query);
             }
 
             next();
         } catch (error) {
             if (error instanceof ZodError) {
-                // Combine issues into a clean, human-readable string
-                // e.g., "password: Password must be at least 8 characters"
                 const formattedMessage = error.issues
                     .map((issue) => {
                         const path = issue.path.length ? `${issue.path.join(".")}: ` : "";
+
                         return `${path}${issue.message}`;
                     })
                     .join("; ");
 
-                // Forward as an operational AppError (HTTP 400 Bad Request)
                 return next(new AppError(formattedMessage, 400, "VALIDATION_ERROR"));
             }
 
