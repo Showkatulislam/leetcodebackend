@@ -38,4 +38,15 @@ router.patch(
 );
 
 
+router.delete(
+    "/:id",
+    authenticate,
+    validate({
+        params: problemIdParamsSchema,
+    }),
+    catchAsync(
+        problemController.deleteProblem.bind(problemController),
+    ),
+);
+
 export default router;
