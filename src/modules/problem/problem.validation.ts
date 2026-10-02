@@ -40,3 +40,7 @@ export const updateProblemSchema = createProblemSchema.partial().extend({
 export const problemIdParamsSchema=z.object({
      id: z.string().uuid("Invalid problem ID"),
 })
+
+export const problemListQuerySchema = z.object({
+    search:z.string().trim().min(1,"Search query cannot be empty").max(100,"Search query must not exceed 100 characters.").optional()
+})

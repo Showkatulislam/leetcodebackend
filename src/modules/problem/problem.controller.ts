@@ -72,11 +72,13 @@ class ProblemController {
     }
 
     public async getAllProblems(
-        _req: Request,
+        req: Request,
         res: Response,
         _next: NextFunction,
     ): Promise<void> {
-        const problems = await problemService.getAllProblems();
+        const problems = await problemService.getPublishedProblems(
+            req.query
+        );
 
         sendResponse(res, {
             statusCode: 200,

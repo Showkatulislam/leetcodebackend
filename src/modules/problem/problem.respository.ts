@@ -1,6 +1,6 @@
 import { Problem } from "../../../generated/prisma/client.js";
 import prisma from "../../lib/prisma.js";
-import type { CreateProblemInput, UpdateProblemInput } from "./problem.interface.js";
+import type { CreateProblemInput, ProblemListQuery, UpdateProblemInput } from "./problem.interface.js";
 import type { IProblemRepository } from "./problem.repository.interface.js";
 
 class ProblemRepository implements IProblemRepository {
@@ -11,6 +11,13 @@ class ProblemRepository implements IProblemRepository {
     }
 
     public async findById(id: string): Promise<Problem | null> {
+        return prisma.problem.findUnique({
+            where: {
+                id,
+            },
+        });
+    }
+        public async findPublishedById(id: string): Promise<Problem | null> {
         return prisma.problem.findUnique({
             where: {
                 id,
@@ -43,17 +50,44 @@ class ProblemRepository implements IProblemRepository {
         });
     }
 
-    public async findAll(): Promise<Problem[]> {
-        return prisma.problem.findMany({
-            orderBy: {
-                createdAt: "desc",
-            },
-        });
-    }
+public async findPublished(
+     query?: ProblemListQuery,
+): Promise<Problem[]> {
+    return prisma.problem.findMany({
+        where: {
+            isPublished: true,
+            ...(query?.search?{
+                OR:[
+                    {
+                        title:{
+                            contains:query.search,
+                            mode:"insensitive"
+                        },
+                        slug:{
+                            contains:query.search,
+                            mode:"insensitive",
+                        },
+                        description:{
+                            contains:query.search,
+                            mode:"insensitive"
+                        }
+                    }
+                ]
+            }:{})
+        },
+        orderBy: {
+            createdAt: "desc",
+        },
+    });
+}
 
-    public async count(): Promise<number> {
-        return prisma.problem.count();
-    }
+public async countPublished(): Promise<number> {
+    return prisma.problem.count({
+        where: {
+            isPublished: true,
+        },
+    });
+}
 }
 
 export const problemRepository = new ProblemRepository();

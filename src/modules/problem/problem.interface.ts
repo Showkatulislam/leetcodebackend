@@ -18,3 +18,7 @@ export interface UpdateProblemInput {
     memoryLimit?: number;
     isPublished?: boolean;
 }
+
+export interface ProblemListQuery {
+    search?: string;
+}

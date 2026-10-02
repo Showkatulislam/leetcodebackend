@@ -1,5 +1,5 @@
 import { AppError } from "../../errors/app-error.js";
-import { CreateProblemInput, UpdateProblemInput } from "./problem.interface.js";
+import { CreateProblemInput, ProblemListQuery, UpdateProblemInput } from "./problem.interface.js";
 import { problemRepository } from "./problem.respository.js";
 
 class ProblemService {
@@ -17,8 +17,7 @@ class ProblemService {
         return problemRepository.create(data);
     }
     public async getProblemById(id: string) {
-        const problem = await problemRepository.findById(id);
-
+        const problem = await problemRepository.findPublishedById(id)
         if (!problem) {
             throw new AppError("Problem not found", 404, "PROBLEM_NOT_FOUND");
         }
@@ -58,12 +57,14 @@ class ProblemService {
         return problemRepository.delete(id);
     }
 
-    public async getAllProblems() {
-        return problemRepository.findAll();
+    public async getPublishedProblems(
+        query?:ProblemListQuery
+    ) {
+        return problemRepository.findPublished(query)
     }
 
     public async countProblems() {
-        return problemRepository.count();
+        return problemRepository.countPublished();
     }
 }
 
