@@ -26,8 +26,8 @@ export class UserRepository implements IUserRepository {
                 id: true,
                 username: true,
                 email: true,
-                bio:true,
-                avatar:true,
+                bio: true,
+                avatar: true,
                 role: true,
                 isActive: true,
                 createdAt: true,
@@ -45,8 +45,8 @@ export class UserRepository implements IUserRepository {
                 id: true,
                 username: true,
                 email: true,
-                avatar:true,
-                bio:true,
+                avatar: true,
+                bio: true,
                 role: true,
                 isActive: true,
                 createdAt: true,
@@ -102,7 +102,7 @@ export class UserRepository implements IUserRepository {
         return user;
     }
     async getUserStatistics(userId: string): Promise<UserStatistic> {
-                return {
+        return {
             totalSolved: 0,
             easySolved: 0,
             mediumSolved: 0,
@@ -114,44 +114,43 @@ export class UserRepository implements IUserRepository {
     }
     async updateAvatar(id: string, avatar: string): Promise<CurrentUser> {
         const user = await prisma.user.update({
-            where:{id},
-            data:{
-                avatar
+            where: { id },
+            data: {
+                avatar,
             },
-            select:{
-                id:true,
-                username:true,
-                email:true,
-                avatar:true,
-                bio:true,
-                role:true,
-                isActive:true,
-                createdAt:true
-            }
-            
-        })
-        return user
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                avatar: true,
+                bio: true,
+                role: true,
+                isActive: true,
+                createdAt: true,
+            },
+        });
+        return user;
     }
     async updateRole(id: string, role: "USER" | "ADMIN"): Promise<CurrentUser> {
         const user = await prisma.user.update({
-            where:{
-                id
+            where: {
+                id,
             },
-            data:{
-                role
+            data: {
+                role,
             },
-            select:{
-                id:true,
-                username:true,
-                email:true,
-                avatar:true,
-                bio:true,
-                role:true,
-                isActive:true,
-                createdAt:true
-            }
-        })
-        return user
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                avatar: true,
+                bio: true,
+                role: true,
+                isActive: true,
+                createdAt: true,
+            },
+        });
+        return user;
     }
 }
 

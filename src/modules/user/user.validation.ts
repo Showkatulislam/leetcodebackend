@@ -14,8 +14,8 @@ export const updateProfileSchema = z
     })
     .strict();
 
-export const updateUserRoleSchema = z.object({
-    role:z.enum(["USER","ADMIN"])
-}).strict();
-
-
+export const updateUserRoleSchema = z
+    .object({
+        role: z.enum(["USER", "ADMIN"]),
+    })
+    .strict();

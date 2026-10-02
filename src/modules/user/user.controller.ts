@@ -51,23 +51,15 @@ export const updateProfile = catchAsync(async (req: Request, res: Response): Pro
     });
 });
 
-export const updateUserRole = catchAsync(
-    async (
-        req: Request,
-        res: Response,
-    ): Promise<void> => {
-        const { userId } = req.params;
+export const updateUserRole = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const { userId } = req.params;
 
-        const user = await userService.updateUserRole(
-            userId as string,
-            req.body.role,
-        );
+    const user = await userService.updateUserRole(userId as string, req.body.role);
 
-        sendResponse(res, {
-            statusCode: 200,
-            success: true,
-            message: "User role updated successfully",
-            data: user,
-        });
-    },
-);
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "User role updated successfully",
+        data: user,
+    });
+});

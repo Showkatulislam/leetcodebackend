@@ -1,11 +1,8 @@
 import { IUserStatisticsRepository } from "./user-statistics.interface.js";
 import { UserStatistic } from "./user.types.js";
 
-export class UserStatisticsRepository
-    implements IUserStatisticsRepository {
-    async getUserStatistics(
-        userId: string,
-    ): Promise<UserStatistic> {
+export class UserStatisticsRepository implements IUserStatisticsRepository {
+    async getUserStatistics(userId: string): Promise<UserStatistic> {
         /**
          * Submission-based statistics will be implemented
          * after the Submission and Problem modules exist.
@@ -23,5 +20,4 @@ export class UserStatisticsRepository
     }
 }
 
-export const userStatisticsRepository =
-    new UserStatisticsRepository();
+export const userStatisticsRepository = new UserStatisticsRepository();

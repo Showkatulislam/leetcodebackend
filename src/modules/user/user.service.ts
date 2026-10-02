@@ -46,40 +46,23 @@ export class UserService {
         return userRepository.updateProfile(userId, data);
     }
 
-    async updateAvatar(
-        userId:string,
-        avatarUrl:string
-    ):Promise<CurrentUser>{
+    async updateAvatar(userId: string, avatarUrl: string): Promise<CurrentUser> {
         const user = await userRepository.findById(userId);
 
-        if(!user){
-            throw new AppError(
-                "User not found",
-                404,
-                "USER_NOT_FOUND"
-            )
+        if (!user) {
+            throw new AppError("User not found", 404, "USER_NOT_FOUND");
         }
 
-        return userRepository.updateAvatar(
-            userId,
-            avatarUrl
-        )
+        return userRepository.updateAvatar(userId, avatarUrl);
     }
 
-    async updateUserRole(userId:string,role:UserRole){
+    async updateUserRole(userId: string, role: UserRole) {
         const user = await userRepository.findById(userId);
 
-        if(!user){
-            throw new AppError(
-                "User not found",
-                404,
-                "USER_NOT_FOUND"
-            )
+        if (!user) {
+            throw new AppError("User not found", 404, "USER_NOT_FOUND");
         }
-        return userRepository.updateRole(
-            userId,
-            role
-        )
+        return userRepository.updateRole(userId, role);
     }
 }
 
