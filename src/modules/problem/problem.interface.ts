@@ -1,3 +1,4 @@
+import { Problem } from "../../../generated/prisma/client.js";
 import { Difficulty } from "../../../generated/prisma/enums.js";
 
 export interface CreateProblemInput {
@@ -21,7 +22,12 @@ export interface UpdateProblemInput {
 
 export interface ProblemListQuery {
     search?: string;
-     difficulty?: "EASY" | "MEDIUM" | "HARD";
-     page?:number;
-     limit?:number;
+    difficulty?: "EASY" | "MEDIUM" | "HARD";
+    page?: number;
+    limit?: number;
+}
+
+export interface ProblemListResult {
+    problems: Problem[];
+    total: number;
 }

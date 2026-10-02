@@ -1,6 +1,10 @@
 import { Problem } from "../../../generated/prisma/client.js";
 import prisma from "../../lib/prisma.js";
-import type { CreateProblemInput, ProblemListQuery, UpdateProblemInput } from "./problem.interface.js";
+import type {
+    CreateProblemInput,
+    ProblemListQuery,
+    UpdateProblemInput,
+} from "./problem.interface.js";
 import type { IProblemRepository } from "./problem.repository.interface.js";
 
 class ProblemRepository implements IProblemRepository {
@@ -17,7 +21,7 @@ class ProblemRepository implements IProblemRepository {
             },
         });
     }
-        public async findPublishedById(id: string): Promise<Problem | null> {
+    public async findPublishedById(id: string): Promise<Problem | null> {
         return prisma.problem.findUnique({
             where: {
                 id,
@@ -50,47 +54,84 @@ class ProblemRepository implements IProblemRepository {
         });
     }
 
-public async findPublished(
-     query?: ProblemListQuery,
-): Promise<Problem[]> {
-    return prisma.problem.findMany({
-        where: {
-            isPublished: true,
-            ...(query?.difficulty?{
-                difficulty:query.difficulty
-            }:{}),
-            ...(query?.search?{
-                OR:[
-                    {
-                        title:{
-                            contains:query.search,
-                            mode:"insensitive"
-                        },
-                        slug:{
-                            contains:query.search,
-                            mode:"insensitive",
-                        },
-                        description:{
-                            contains:query.search,
-                            mode:"insensitive"
-                        }
-                    }
-                ]
-            }:{})
-        },
-        orderBy: {
-            createdAt: "desc",
-        },
-    });
-}
+    public async findPublished(query?: ProblemListQuery): Promise<Problem[]> {
+        const page = query?.page ?? 1;
+        const limit =Number( query?.limit || 20);
+        const skip = (page - 1) * limit;
+        return prisma.problem.findMany({
+            where: {
+                isPublished: true,
+                ...(query?.difficulty
+                    ? {
+                          difficulty: query.difficulty,
+                      }
+                    : {}),
+                ...(query?.search
+                    ? {
+                          OR: [
+                              {
+                                  title: {
+                                      contains: query.search,
+                                      mode: "insensitive",
+                                  },
+                                  slug: {
+                                      contains: query.search,
+                                      mode: "insensitive",
+                                  },
+                                  description: {
+                                      contains: query.search,
+                                      mode: "insensitive",
+                                  },
+                              },
+                          ],
+                      }
+                    : {}),
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+            skip,
+            take: limit,
+        });
+    }
 
-public async countPublished(): Promise<number> {
-    return prisma.problem.count({
-        where: {
-            isPublished: true,
-        },
-    });
-}
+    public async countPublished(query?: ProblemListQuery): Promise<number> {
+        return prisma.problem.count({
+            where: {
+                isPublished: true,
+                ...(query?.difficulty
+                    ? {
+                          difficulty: query.difficulty,
+                      }
+                    : {}),
+
+                ...(query?.search
+                    ? {
+                          OR: [
+                              {
+                                  title: {
+                                      contains: query.search,
+                                      mode: "insensitive",
+                                  },
+                              },
+                              {
+                                  slug: {
+                                      contains: query.search,
+                                      mode: "insensitive",
+                                  },
+                              },
+                              {
+                                  description: {
+                                      contains: query.search,
+                                      mode: "insensitive",
+                                  },
+                              },
+                          ],
+                      }
+                    : {}),
+            },
+        });
+    }
 }
 
 export const problemRepository = new ProblemRepository();

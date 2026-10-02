@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { validate } from "../../middlewares/validate.middleware.js";
-import { createProblemSchema, problemIdParamsSchema, problemListQuerySchema, updateProblemSchema } from "./problem.validation.js";
+import {
+    createProblemSchema,
+    problemIdParamsSchema,
+    problemListQuerySchema,
+    updateProblemSchema,
+} from "./problem.validation.js";
 import { problemController } from "./problem.controller.js";
 import { catchAsync } from "../../shared/utils/catch.async.js";
 import { authenticate } from "../../middlewares/authenticate.js";
@@ -19,11 +24,10 @@ router.post(
 router.get(
     "/:id",
     validate({
-        params:problemIdParamsSchema
+        params: problemIdParamsSchema,
     }),
-    catchAsync(problemController.getProblemById.bind(problemController))
-)
-
+    catchAsync(problemController.getProblemById.bind(problemController)),
+);
 
 router.patch(
     "/:id",
@@ -32,20 +36,15 @@ router.patch(
         params: problemIdParamsSchema,
         body: updateProblemSchema,
     }),
-    catchAsync(
-        problemController.updateProblem.bind(problemController),
-    ),
+    catchAsync(problemController.updateProblem.bind(problemController)),
 );
 
 router.get(
     "/",
     validate({
-        query:problemListQuerySchema
+        query: problemListQuerySchema,
     }),
-    catchAsync(
-        problemController.getAllProblems.bind(problemController)
-    ),
+    catchAsync(problemController.getAllProblems.bind(problemController)),
 );
-
 
 export default router;

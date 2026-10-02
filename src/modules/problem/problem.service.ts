@@ -17,7 +17,7 @@ class ProblemService {
         return problemRepository.create(data);
     }
     public async getProblemById(id: string) {
-        const problem = await problemRepository.findPublishedById(id)
+        const problem = await problemRepository.findPublishedById(id);
         if (!problem) {
             throw new AppError("Problem not found", 404, "PROBLEM_NOT_FOUND");
         }
@@ -57,15 +57,19 @@ class ProblemService {
         return problemRepository.delete(id);
     }
 
-    public async getPublishedProblems(
-        query?:ProblemListQuery
-    ) {
-        console.log(query)
-        return problemRepository.findPublished(query)
+    public async getPublishedProblems(query?: ProblemListQuery) {
+        const [problems, total] = await Promise.all([
+            problemRepository.findPublished(query),
+            problemRepository.countPublished(query),
+        ]);
+        return {
+            problems,
+            total,
+        };
     }
 
-    public async countProblems() {
-        return problemRepository.countPublished();
+    public async countProblems(query?: ProblemListQuery) {
+        return problemRepository.countPublished(query);
     }
 }
 

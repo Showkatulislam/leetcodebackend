@@ -3,11 +3,7 @@ import { problemService } from "./problem.service.js";
 import { sendResponse } from "../../shared/utils/send-response.js";
 
 class ProblemController {
-    public async createProblem(
-        req: Request,
-        res: Response,
-        _next: NextFunction,
-    ): Promise<void> {
+    public async createProblem(req: Request, res: Response, _next: NextFunction): Promise<void> {
         const problem = await problemService.createProblem(req.body);
 
         sendResponse(res, {
@@ -18,11 +14,7 @@ class ProblemController {
         });
     }
 
-    public async getProblemById(
-        req: Request,
-        res: Response,
-        _next: NextFunction,
-    ): Promise<void> {
+    public async getProblemById(req: Request, res: Response, _next: NextFunction): Promise<void> {
         const { id } = req.params;
 
         const problem = await problemService.getProblemById(id as string);
@@ -35,17 +27,10 @@ class ProblemController {
         });
     }
 
-    public async updateProblem(
-        req: Request,
-        res: Response,
-        _next: NextFunction,
-    ): Promise<void> {
+    public async updateProblem(req: Request, res: Response, _next: NextFunction): Promise<void> {
         const { id } = req.params;
 
-        const problem = await problemService.updateProblem(
-            id as string,
-            req.body,
-        );
+        const problem = await problemService.updateProblem(id as string, req.body);
 
         sendResponse(res, {
             statusCode: 200,
@@ -55,11 +40,7 @@ class ProblemController {
         });
     }
 
-    public async deleteProblem(
-        req: Request,
-        res: Response,
-        _next: NextFunction,
-    ): Promise<void> {
+    public async deleteProblem(req: Request, res: Response, _next: NextFunction): Promise<void> {
         const { id } = req.params;
 
         await problemService.deleteProblem(id as string);
@@ -71,20 +52,24 @@ class ProblemController {
         });
     }
 
-    public async getAllProblems(
-        req: Request,
-        res: Response,
-        _next: NextFunction,
-    ): Promise<void> {
-        const problems = await problemService.getPublishedProblems(
-            req.query
-        );
+    public async getAllProblems(req: Request, res: Response, _next: NextFunction): Promise<void> {
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 20;
 
+        const { problems, total } = await problemService.getPublishedProblems(req.query);
+
+        const totalPages = Math.ceil(total / limit);
         sendResponse(res, {
             statusCode: 200,
             success: true,
             message: "Problems retrieved successfully",
             data: problems,
+            meta: {
+                page,
+                limit,
+                total,
+                totalPages,
+            },
         });
     }
 }
