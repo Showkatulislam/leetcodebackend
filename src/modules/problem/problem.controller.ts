@@ -1,21 +1,14 @@
-import type {
-    Request,
-    Response,
-} from "express";
-
-
+import { NextFunction, Request, Response } from "express";
 import { problemService } from "./problem.service.js";
 import { sendResponse } from "../../shared/utils/send-response.js";
 
 class ProblemController {
-    async createProblem(
+    public async createProblem(
         req: Request,
         res: Response,
+        _next: NextFunction,
     ): Promise<void> {
-        const problem =
-            await problemService.createProblem(
-                req.body,
-            );
+        const problem = await problemService.createProblem(req.body);
 
         sendResponse(res, {
             statusCode: 201,
@@ -25,15 +18,34 @@ class ProblemController {
         });
     }
 
-    async updateProblem(
+    public async getProblemById(
         req: Request,
         res: Response,
+        _next: NextFunction,
     ): Promise<void> {
-        const problem =
-            await problemService.updateProblem(
-                req.params.id as string,
-                req.body,
-            );
+        const { id } = req.params;
+
+        const problem = await problemService.getProblemById(id as string);
+
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            message: "Problem retrieved successfully",
+            data: problem,
+        });
+    }
+
+    public async updateProblem(
+        req: Request,
+        res: Response,
+        _next: NextFunction,
+    ): Promise<void> {
+        const { id } = req.params;
+
+        const problem = await problemService.updateProblem(
+            id as string,
+            req.body,
+        );
 
         sendResponse(res, {
             statusCode: 200,
@@ -43,13 +55,14 @@ class ProblemController {
         });
     }
 
-    async deleteProblem(
+    public async deleteProblem(
         req: Request,
         res: Response,
+        _next: NextFunction,
     ): Promise<void> {
-        await problemService.deleteProblem(
-            req.params.id as string,
-        );
+        const { id } = req.params;
+
+        await problemService.deleteProblem(id as string);
 
         sendResponse(res, {
             statusCode: 200,
@@ -58,71 +71,20 @@ class ProblemController {
         });
     }
 
-    async getProblemById(
-        req:Request,
-        res:Response
-    ):Promise<void>{
-        const problem = await problemService.getProblemById(req.params.id as string);
+    public async getAllProblems(
+        _req: Request,
+        res: Response,
+        _next: NextFunction,
+    ): Promise<void> {
+        const problems = await problemService.getAllProblems();
 
-        sendResponse(res,{
-            statusCode:200,
-            success:true,
-            message:"Problem retrieved successfully.",
-            data:problem
-        })
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            message: "Problems retrieved successfully",
+            data: problems,
+        });
     }
-    async getProblems(
-    _req: Request,
-    res: Response,
-): Promise<void> {
-    const problems =
-        await problemService.getProblems();
-
-    sendResponse(res, {
-        statusCode: 200,
-        success: true,
-        message: "Problems retrieved successfully",
-        data: problems,
-    });
-}
-async searchProblems(
-    req: Request,
-    res: Response,
-): Promise<void> {
-    const problems =
-        await problemService.searchProblems(
-            req.query.search as string,
-        );
-
-    sendResponse(res, {
-        statusCode: 200,
-        success: true,
-        message: "Problems searched successfully",
-        data: problems,
-    });
 }
 
-async filterProblems(
-    req: Request,
-    res: Response,
-): Promise<void> {
-    const problems =
-        await problemService.filterProblems(
-            req.query.difficulty as
-                | "EASY"
-                | "MEDIUM"
-                | "HARD"
-                | undefined,
-        );
-
-    sendResponse(res, {
-        statusCode: 200,
-        success: true,
-        message: "Problems filtered successfully",
-        data: problems,
-    });
-}
-}
-
-export const problemController =
-    new ProblemController();
+export const problemController = new ProblemController();

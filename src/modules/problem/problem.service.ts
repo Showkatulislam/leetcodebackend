@@ -1,147 +1,70 @@
-import {
-    problemRepository,
-} from "./problem.repository.js";
-
-import {
-    ICreateProblemData,
-    IUpdateProblemData,
-} from "./problem.interface.js";
 import { AppError } from "../../errors/app-error.js";
-import { Problem } from "../../../generated/prisma/client.js";
+import { CreateProblemInput, UpdateProblemInput } from "./problem.interface.js";
+import { problemRepository } from "./problem.respository.js";
 
 class ProblemService {
-    async createProblem(
-        data: ICreateProblemData,
-    ) {
-        const existingProblem =
-            await problemRepository.getProblemBySlug(
-                data.slug,
-            );
+    public async createProblem(data: CreateProblemInput) {
+        const existingProblem = await problemRepository.findBySlug(data.slug);
 
         if (existingProblem) {
             throw new AppError(
                 "A problem with this slug already exists",
-                 409,
-                 ""
+                409,
+                "PROBLEM_SLUG_EXISTS",
             );
         }
 
-        return problemRepository.createProblem(data);
+        return problemRepository.create(data);
+    }
+    public async getProblemById(id: string) {
+        const problem = await problemRepository.findById(id);
+
+        if (!problem) {
+            throw new AppError("Problem not found", 404, "PROBLEM_NOT_FOUND");
+        }
+
+        return problem;
     }
 
-    async updateProblem(
-        id: string,
-        data: IUpdateProblemData,
-    ) {
-        const existingProblem =
-            await problemRepository.getProblemById(id);
+    public async updateProblem(id: string, data: UpdateProblemInput) {
+        const existingProblem = await problemRepository.findById(id);
 
         if (!existingProblem) {
-            throw new AppError(
-                "Problem not found",
-                404,
-                 ""
-            );
+            throw new AppError("Problem not found", 404, "PROBLEM_NOT_FOUND");
         }
 
-        if (data.slug) {
-            const problemWithSlug =
-                await problemRepository.getProblemBySlug(
-                    data.slug,
-                );
+        if (data.slug && data.slug !== existingProblem.slug) {
+            const problemWithSlug = await problemRepository.findBySlug(data.slug);
 
-            if (
-                problemWithSlug &&
-                problemWithSlug.id !== id
-            ) {
+            if (problemWithSlug) {
                 throw new AppError(
                     "A problem with this slug already exists",
                     409,
-                 ""
+                    "PROBLEM_SLUG_EXISTS",
                 );
             }
         }
 
-        return problemRepository.updateProblem(
-            id,
-            data,
-        );
+        return problemRepository.update(id, data);
     }
 
-    async deleteProblem(
-        id: string,
-    ) {
-        const existingProblem =
-            await problemRepository.getProblemById(id);
+    public async deleteProblem(id: string) {
+        const existingProblem = await problemRepository.findById(id);
 
         if (!existingProblem) {
-            throw new AppError(
-                "Problem not found",
-                                 404,
-                 ""
-            );
+            throw new AppError("Problem not found", 404, "PROBLEM_NOT_FOUND");
         }
 
-        return problemRepository.deleteProblem(id);
+        return problemRepository.delete(id);
     }
 
-    async getProblemById(
-        id: string,
-    ) {
-        const problem =
-            await problemRepository.getProblemById(id);
-
-        if (!problem) {
-            throw new AppError(
-                "Problem not found",
-                 404,
-                 ""
-            );
-        }
-
-        return problem;
+    public async getAllProblems() {
+        return problemRepository.findAll();
     }
 
-    async getProblemBySlug(
-        slug: string,
-    ) {
-        const problem =
-            await problemRepository.getProblemBySlug(
-                slug,
-            );
-
-        if (!problem) {
-            throw new AppError(
-                "Problem not found",
-                404,
-                 ""
-            );
-        }
-
-        return problem;
+    public async countProblems() {
+        return problemRepository.count();
     }
-
-    async getProblems() {
-        return problemRepository.getProblems();
-    }
-
-    async searchProblems(
-    search: string,
-): Promise<Problem[]> {
-    return problemRepository.searchProblems(
-        search,
-    );
 }
 
-async filterProblems(
-    difficulty?: "EASY" | "MEDIUM" | "HARD",
-): Promise<Problem[]> {
-    return problemRepository.filterProblems(
-        difficulty,
-    );
-}
-
-}
-
-export const problemService =
-    new ProblemService();
+export const problemService = new ProblemService();
