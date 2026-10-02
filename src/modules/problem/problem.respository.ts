@@ -56,6 +56,9 @@ public async findPublished(
     return prisma.problem.findMany({
         where: {
             isPublished: true,
+            ...(query?.difficulty?{
+                difficulty:query.difficulty
+            }:{}),
             ...(query?.search?{
                 OR:[
                     {

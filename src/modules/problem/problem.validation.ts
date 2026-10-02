@@ -42,5 +42,8 @@ export const problemIdParamsSchema=z.object({
 })
 
 export const problemListQuerySchema = z.object({
-    search:z.string().trim().min(1,"Search query cannot be empty").max(100,"Search query must not exceed 100 characters.").optional()
+    search:z.string().trim().min(1,"Search query cannot be empty").max(100,"Search query must not exceed 100 characters.").optional(),
+        difficulty: z
+        .enum(["EASY", "MEDIUM", "HARD"])
+        .optional(),
 })

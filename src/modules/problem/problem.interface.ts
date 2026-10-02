@@ -21,4 +21,7 @@ export interface UpdateProblemInput {
 
 export interface ProblemListQuery {
     search?: string;
+     difficulty?: "EASY" | "MEDIUM" | "HARD";
+     page?:number;
+     limit?:number;
 }

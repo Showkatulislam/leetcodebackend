@@ -60,6 +60,7 @@ class ProblemService {
     public async getPublishedProblems(
         query?:ProblemListQuery
     ) {
+        console.log(query)
         return problemRepository.findPublished(query)
     }
 
