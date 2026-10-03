@@ -56,7 +56,7 @@ class ProblemRepository implements IProblemRepository {
 
     public async findPublished(query?: ProblemListQuery): Promise<Problem[]> {
         const page = query?.page ?? 1;
-        const limit =Number( query?.limit || 20);
+        const limit = Number(query?.limit || 20);
         const skip = (page - 1) * limit;
         return prisma.problem.findMany({
             where: {

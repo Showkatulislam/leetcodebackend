@@ -9,6 +9,8 @@ import {
 import { problemController } from "./problem.controller.js";
 import { catchAsync } from "../../shared/utils/catch.async.js";
 import { authenticate } from "../../middlewares/authenticate.js";
+import { assignTagsSchema, problemIdSchema } from "../tag/tag.validation.js";
+import { tagController } from "../tag/tag.controller.js";
 
 const router = Router();
 
@@ -46,5 +48,16 @@ router.get(
     }),
     catchAsync(problemController.getAllProblems.bind(problemController)),
 );
+
+router.post(
+    "/:problemId/tags",
+    validate({
+        params:problemIdSchema,
+        body:assignTagsSchema
+    }),
+    catchAsync(
+        tagController.assignTagsToProblem.bind(tagController)
+    )
+)
 
 export default router;
