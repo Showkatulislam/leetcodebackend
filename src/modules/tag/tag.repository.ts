@@ -42,64 +42,58 @@ export class TagRepository implements ITagRepository {
         });
     }
     async delete(id: string): Promise<void> {
-    await prisma.tag.delete({
-        where: {
-            id,
-        },
-    });
-}
-async findTagByIds(tagIds: string[]): Promise<Tag[]> {
-    return await  prisma.tag.findMany({
-        where:{
-            id:{
-                in:tagIds,
-            }
-        }
-    })
-}
+        await prisma.tag.delete({
+            where: {
+                id,
+            },
+        });
+    }
+    async findTagByIds(tagIds: string[]): Promise<Tag[]> {
+        return await prisma.tag.findMany({
+            where: {
+                id: {
+                    in: tagIds,
+                },
+            },
+        });
+    }
 
-async findExistingProblemTags(problemId: string, tagIds: string[]): Promise<string[]> {
-    const problemTags = await prisma.problemTag.findMany({
-        where:{
-            problemId,
-            tagId:{
-                in:tagIds
-            }
-        },
-        select:{
-            tagId:true
-        }
-    })
-    return problemTags.map((problemTag)=>problemTag.tagId);
-}
+    async findExistingProblemTags(problemId: string, tagIds: string[]): Promise<string[]> {
+        const problemTags = await prisma.problemTag.findMany({
+            where: {
+                problemId,
+                tagId: {
+                    in: tagIds,
+                },
+            },
+            select: {
+                tagId: true,
+            },
+        });
+        return problemTags.map((problemTag) => problemTag.tagId);
+    }
 
-async createProblemTag(problemId: string, tagId: string): Promise<void> {
-    await prisma.problemTag.create({
-        data:{
-            problemId,
-            tagId
-        }
-    })
-}
+    async createProblemTag(problemId: string, tagId: string): Promise<void> {
+        await prisma.problemTag.create({
+            data: {
+                problemId,
+                tagId,
+            },
+        });
+    }
 
-
- async assignTagsToProblem(problemId: string, tagIds: string[]): Promise<void> {
-    await prisma.$transaction(
-        tagIds.map((tagId)=>
-        prisma.problemTag.create(
-            {
-                data:{
-                    problemId,
-                    tagId
-                }
-            }
-        ))
-    )
-}
-
-
-
-
+    async assignTagsToProblem(problemId: string, tagIds: string[]): Promise<void> {
+        await prisma.$transaction(
+            tagIds.map((tagId) =>
+                prisma.problemTag.create({
+                    data: {
+                        problemId,
+                        tagId,
+                    },
+                }),
+            ),
+        );
+    }
 }
 
 export const tagRepository = new TagRepository();

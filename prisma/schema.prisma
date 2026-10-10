@@ -201,9 +201,31 @@ model Language {
 
   submissions Submission[]
   problems    ProblemLanguage[]
+  configuration LanguageConfiguration?
 
   @@unique([name, version])
   @@map("languages")
+}
+model LanguageConfiguration {
+  id String @id @default(uuid())
+
+  languageId String   @unique
+  language   Language @relation(fields: [languageId],references: [id], onDelete: Cascade)
+
+  runtimeImage   String
+  sourceFile     String
+  compileCommand String? @db.Text
+  runCommand     String  @db.Text
+
+  defaultTimeLimit   Int @default(2000)
+  defaultMemoryLimit Int @default(256)
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("language_configurations")
 }
 
 model ProblemLanguage {

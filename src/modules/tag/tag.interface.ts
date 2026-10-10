@@ -22,20 +22,9 @@ export interface ITagRepository {
     update(id: string, data: IUpdateTag): Promise<unknown>;
     delete(id: string): Promise<void>;
 
-    findTagByIds(tagIds:string[]):Promise<Tag[]>;
-    createProblemTag(
-        problemId:string,
-        tagId:string
-    ):Promise<void>;
-    findExistingProblemTags(
-        problemId:string,
-        tagIds:string[]
-    ):Promise<string[]>
+    findTagByIds(tagIds: string[]): Promise<Tag[]>;
+    createProblemTag(problemId: string, tagId: string): Promise<void>;
+    findExistingProblemTags(problemId: string, tagIds: string[]): Promise<string[]>;
 
-    assignTagsToProblem(
-        problemId:string,
-        tagIds:string[]
-    ):Promise<void>;
+    assignTagsToProblem(problemId: string, tagIds: string[]): Promise<void>;
 }
-
-

@@ -60,3 +60,15 @@ export const problemListQuerySchema = z.object({
         .max(100, "Limit must not exceed 100")
         .default(20),
 });
+
+export const getProblemsSchema = z.object({
+    page: z.coerce.number().int().positive().optional(),
+
+    limit: z.coerce.number().int().positive().max(100).optional(),
+
+    search: z.string().trim().optional(),
+
+    difficulty: z.string().trim().optional(),
+
+    tag: z.string().trim().min(1, "Tag cannot be empty").optional(),
+});

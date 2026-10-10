@@ -18,11 +18,11 @@ router.post(
 router.patch(
     "/:id",
     validate({
-        params:tagIdSchema,
-        body:updateProblemSchema
+        params: tagIdSchema,
+        body: updateProblemSchema,
     }),
-    catchAsync(tagController.updateTag.bind(tagController))
-)
+    catchAsync(tagController.updateTag.bind(tagController)),
+);
 router.delete(
     "/:id",
     validate({
@@ -30,6 +30,5 @@ router.delete(
     }),
     catchAsync(tagController.deleteTag.bind(tagController)),
 );
-
 
 export default router;

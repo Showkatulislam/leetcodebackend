@@ -14,55 +14,40 @@ export class TagController {
         });
     }
 
-    async updateTag(
-        req:Request,
-        res:Response
-    ){
-        const {id} = req.params;
+    async updateTag(req: Request, res: Response) {
+        const { id } = req.params;
 
-        const tag = await tagService.updateTag(
-            id as string,
-            req.body
-        )
+        const tag = await tagService.updateTag(id as string, req.body);
 
-        sendResponse(res,{
-            statusCode:200,
-            success:true,
-            message:"Tag updated successfully.",
-            data:tag
-        })
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            message: "Tag updated successfully.",
+            data: tag,
+        });
     }
 
-    async deleteTag(
-        req:Request,
-        res:Response
-    ){
-        const {id} = req.params;
+    async deleteTag(req: Request, res: Response) {
+        const { id } = req.params;
 
         await tagService.deleteTag(id as string);
 
-        sendResponse(res,{
-            statusCode:200,
-            success:true,
-             message: "Tag deleted successfully",
-        })
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            message: "Tag deleted successfully",
+        });
     }
-    async  assignTagsToProblem(
-        req:Request,
-        res:Response
-    ){
+    async assignTagsToProblem(req: Request, res: Response) {
         const problemId = req.params.problemId as string;
 
-        await tagService.assignTagsProblem(
-            problemId,
-            req.body.tagIds
-        )
+        await tagService.assignTagsProblem(problemId, req.body.tagIds);
 
-        sendResponse(res,{
-            statusCode:200,
-            success:true,
-            message:"Tags assigned to problem successfully."
-        })
+        sendResponse(res, {
+            statusCode: 200,
+            success: true,
+            message: "Tags assigned to problem successfully.",
+        });
     }
 }
 

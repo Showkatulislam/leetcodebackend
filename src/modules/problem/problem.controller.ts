@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { problemService } from "./problem.service.js";
 import { sendResponse } from "../../shared/utils/send-response.js";
+import { languageService } from "../language/language.service.js";
 
 class ProblemController {
     public async createProblem(req: Request, res: Response, _next: NextFunction): Promise<void> {
@@ -71,6 +72,21 @@ class ProblemController {
                 totalPages,
             },
         });
+    }
+        async getProblemLanguages(
+        req:Request,
+        res:Response
+    ){
+        const {problemId} = req.params;
+        const languages = await languageService.getProblemLanguage(problemId as string)
+
+         sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Problem languages retrieved successfully.",
+        data: languages,
+    })
+    
     }
 }
 
