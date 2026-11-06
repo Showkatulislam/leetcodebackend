@@ -1,7 +1,8 @@
-import { Problem } from "../../../generated/prisma/client.js";
+import { Prisma, Problem } from "../../../generated/prisma/client.js";
 import prisma from "../../lib/prisma.js";
 import type {
     CreateProblemInput,
+    IProblemFilters,
     ProblemListQuery,
     UpdateProblemInput,
 } from "./problem.interface.js";
@@ -131,6 +132,53 @@ class ProblemRepository implements IProblemRepository {
                     : {}),
             },
         });
+    }
+
+    async getAllProblems(filters: IProblemFilters): Promise<Problem[]> {
+        const page = filters?.page ?? 1;
+        const limit = Number(filters?.limit || 20);
+        const skip = (page - 1) * limit;
+        const where: Prisma.ProblemWhereInput = {
+            isPublished: true,
+        };
+        if (filters.search) {
+            where.OR = [
+                {
+                    title: {
+                        contains: filters.search,
+                        mode: "insensitive",
+                    },
+                },
+                {
+                    description: {
+                        contains: filters.search,
+                        mode: "insensitive",
+                    },
+                },
+            ];
+        }
+        if (filters.difficulty) {
+            where.difficulty = filters.difficulty;
+        }
+        if (filters.tag) {
+            where.tags = {
+                some: {
+                    tag: {
+                        slug: filters.tag,
+                    },
+                },
+            };
+        }
+
+        const problems = await prisma.problem.findMany({
+            where,
+            orderBy: {
+                createdAt: "desc",
+            },
+            skip,
+            take: limit,
+        });
+        return problems;
     }
 }
 

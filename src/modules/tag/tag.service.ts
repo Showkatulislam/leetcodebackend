@@ -49,61 +49,35 @@ export class TagService {
 
         return await tagRepository.update(id, { name: normalizedName, slug });
     }
-    async deleteTag(id:string):Promise<void>{
+    async deleteTag(id: string): Promise<void> {
         const existingTag = await tagRepository.findById(id);
 
-        if(!existingTag){
-            throw new AppError(
-                "Tag not found",
-                404,
-                ""
-            )
+        if (!existingTag) {
+            throw new AppError("Tag not found", 404, "");
         }
-        await tagRepository.delete(id)
+        await tagRepository.delete(id);
     }
 
-    async assignTagsProblem(
-        problemId:string,
-        tagIds:string[]
-    ):Promise<void>{
+    async assignTagsProblem(problemId: string, tagIds: string[]): Promise<void> {
         const problem = await problemService.getProblemById(problemId);
 
-        if(!problem){
-            throw new AppError(
-                "Problem not found",
-                404,
-                ""
-            )
+        if (!problem) {
+            throw new AppError("Problem not found", 404, "");
         }
         const tags = await tagRepository.findTagByIds(tagIds);
 
-        if(tags.length !== tagIds.length){
-            throw new AppError(
-                "One or more tags were not found",
-                404,
-                ""
-            )
+        if (tags.length !== tagIds.length) {
+            throw new AppError("One or more tags were not found", 404, "");
         }
 
-        const existingTagIds = await tagRepository.findExistingProblemTags(
-            problemId,
-            tagIds
-        )
+        const existingTagIds = await tagRepository.findExistingProblemTags(problemId, tagIds);
 
         const existingTagSet = new Set(existingTagIds);
 
-        const newTagIds = tagIds.filter(
-            (tagId)=>!existingTagSet.has(tagId)
-        )
+        const newTagIds = tagIds.filter((tagId) => !existingTagSet.has(tagId));
 
-        await tagRepository.assignTagsToProblem(
-            problemId,
-            tagIds
-        )
+        await tagRepository.assignTagsToProblem(problemId, tagIds);
     }
-
-    
-
 }
 
 export const tagService = new TagService();

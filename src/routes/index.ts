@@ -5,6 +5,8 @@ import authRouter from "./../modules/auth/auth.route.js";
 import userRouter from "./../modules/user/user.route.js";
 import problemRouter from "./../modules/problem/problem.route.js";
 import tagRouter from "./../modules/tag/tag.route.js";
+import testCaseRoute from "./../modules/test-case/test-case.route.js";
+import languageRouter from "./../modules/language/language.route.js";
 
 const router = Router();
 
@@ -14,5 +16,7 @@ router.use("/auth", authRouter);
 router.use("/users", userRouter);
 router.use("/problems", problemRouter);
 router.use("/tags", tagRouter);
+router.use("/test-case", testCaseRoute);
+router.use("/langauge", languageRouter);
 
 export default router;

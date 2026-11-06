@@ -1,5 +1,12 @@
+import { ProblemLanguage } from "../../../generated/prisma/client.js";
 import { AppError } from "../../errors/app-error.js";
-import { CreateProblemInput, ProblemListQuery, UpdateProblemInput } from "./problem.interface.js";
+import { languageRepository } from "../language/language.repository.js";
+import {
+    CreateProblemInput,
+    IProblemFilters,
+    ProblemListQuery,
+    UpdateProblemInput,
+} from "./problem.interface.js";
 import { problemRepository } from "./problem.respository.js";
 
 class ProblemService {
@@ -70,6 +77,14 @@ class ProblemService {
 
     public async countProblems(query?: ProblemListQuery) {
         return problemRepository.countPublished(query);
+    }
+    public async getAllProblems(filters: IProblemFilters) {
+        return await problemRepository.getAllProblems(filters);
+    }
+        async getProblemLanguage(
+        problemId:string
+    ):Promise<ProblemLanguage[]>{
+        return languageRepository.findProblemLanguages(problemId)
     }
 }
 

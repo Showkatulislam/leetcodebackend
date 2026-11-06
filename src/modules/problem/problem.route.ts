@@ -52,11 +52,16 @@ router.get(
 router.post(
     "/:problemId/tags",
     validate({
-        params:problemIdSchema,
-        body:assignTagsSchema
+        params: problemIdSchema,
+        body: assignTagsSchema,
     }),
+    catchAsync(tagController.assignTagsToProblem.bind(tagController)),
+);
+
+router.get(
+    "/:problemId/languages",
     catchAsync(
-        tagController.assignTagsToProblem.bind(tagController)
+        problemController.getProblemLanguages.bind(problemController)
     )
 )
 

@@ -1,6 +1,7 @@
 import { Problem } from "../../../generated/prisma/client.js";
 import type {
     CreateProblemInput,
+    IProblemFilters,
     ProblemListQuery,
     UpdateProblemInput,
 } from "./problem.interface.js";
@@ -21,4 +22,6 @@ export interface IProblemRepository {
     findPublished(query?: ProblemListQuery): Promise<Problem[]>;
 
     countPublished(query?: ProblemListQuery): Promise<number>;
+
+    getAllProblems(filters: IProblemFilters): Promise<Problem[]>;
 }

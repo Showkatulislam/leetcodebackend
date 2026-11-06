@@ -25,9 +25,18 @@ export interface ProblemListQuery {
     difficulty?: "EASY" | "MEDIUM" | "HARD";
     page?: number;
     limit?: number;
+    tag?: string;
 }
 
 export interface ProblemListResult {
     problems: Problem[];
     total: number;
+}
+
+export interface IProblemFilters {
+    search?: string;
+    difficulty?: Difficulty;
+    tag?: string;
+    page?: number;
+    limit?: number;
 }
