@@ -15,7 +15,8 @@
         "prisma:validate": "prisma validate",
         "prisma:generate": "prisma generate",
         "prisma:migrate": "prisma migrate dev",
-        "prisma:studio": "prisma studio"
+        "prisma:studio": "prisma studio",
+        "worker:judge": "tsx watch src/workers/judge.worker.ts"
     },
     "keywords": [],
     "author": "",
